@@ -25,6 +25,19 @@ def get_token_account_id(filename: str = "keys.yaml") -> tuple[str, str]:
     return token, account_id
 
 
+def get_accounts_from_token(token: str) -> list[inv.Account] | None:
+    """
+    Get one account with the highest RUB balance from token
+    """
+    try:
+        with inv.Client(token=token) as client:
+            accounts: list[inv.Account] = client.users.get_accounts().accounts
+        accounts = [account for account in accounts if account.status == inv.AccountStatus.ACCOUNT_STATUS_OPEN and account.type != inv.AccountType.ACCOUNT_TYPE_INVEST_BOX]
+        return accounts
+    except inv.exceptions.UnauthenticatedError:
+        return None
+
+
 def get_yesterday_close(candles: list[inv.HistoricCandle]) -> float | None:
     today = datetime.datetime.utcnow()
     for candle in reversed(candles):
@@ -109,17 +122,8 @@ def get_candles(
 
 async def main():
     token, account_id = get_token_account_id("keys.yaml")
-
-    # Create client
-    force_update = True
-    async with inv.AsyncClient(token=token) as client:
-        shares: list[inv.Share] = (
-            await load_from_cache("shares", get_shares(client), force_update)
-        ).instruments
-        candles = await load_from_cache(
-            "candles", get_candles(client, shares[1:5], days=365), force_update
-        )
-        print(candles)
+    from pprint import pprint
+    pprint(get_accounts_from_token(token))
 
 
 if __name__ == "__main__":

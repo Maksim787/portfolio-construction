@@ -1,0 +1,23 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+%}
+<div class="container">
+  <h1 align="center">Enter account_id</h1>
+  <form method="POST">
+    <div>Select your account_id:</div>
+    <br />
+    {% for account in accounts %}
+    <input
+      type="radio"
+      id="account_id"
+      name="account_id"
+      value="{{ account.id }}"
+    />
+    <label for="option1">{{ account.name }}</label>
+    <br />
+    {% endfor %}
+
+    <br />
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+{% endblock %}
