@@ -3,6 +3,9 @@ keys.yaml
 tmp/
 cache/
 result/
+instance/
+*.ipynb
 
 __pycache__
 .idea
+.vscode

@@ -53,12 +53,9 @@ def get_share_row(share: inv.Share, last_prices_by_figi: dict[str, inv.LastPrice
 # Main
 ###################################################################################
 
-async def main(update_cache: bool):
+async def main(force_update: bool):
     # Read config
-    with open('keys.yaml') as f:
-        keys = yaml.safe_load(f)
-    token = keys['token']
-    account_id = str(keys['account_id'])
+    token, account_id = get_token_account_id()
 
     with open('underrepresented_shares/config.yaml') as f:
         config = yaml.safe_load(f)
@@ -66,9 +63,9 @@ async def main(update_cache: bool):
 
     # Create client
     async with inv.AsyncClient(token=token) as client:
-        shares: list[inv.Share] = (await load_from_cache('shares', get_shares(client), update_cache)).instruments
-        last_prices: list[inv.LastPrice] = (await load_from_cache('last_prices', get_last_prices(client, shares), update_cache)).last_prices
-        positions: list[inv.PositionsSecurities] = (await load_from_cache('positions', get_positions(client, account_id), update_cache)).securities
+        shares: list[inv.Share] = (await load_from_cache('shares', get_shares(client), force_update)).instruments
+        last_prices: list[inv.LastPrice] = (await load_from_cache('last_prices', get_last_prices(client, shares), force_update)).last_prices
+        positions: list[inv.PositionsSecurities] = (await load_from_cache('positions', get_positions(client, account_id), force_update)).securities
 
     positions_figi = {position.figi for position in positions}
     last_prices_by_figi = {last_price.figi: last_price for last_price in last_prices}
@@ -88,4 +85,4 @@ async def main(update_cache: bool):
 
 
 if __name__ == '__main__':
-    asyncio.run(main(update_cache=True))
+    asyncio.run(main(force_update=True))
