@@ -5,6 +5,7 @@ cache/
 result/
 instance/
 venv/
+.venv/
 *.ipynb
 
 __pycache__

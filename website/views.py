@@ -1,3 +1,4 @@
+import traceback
 from library.utils import get_accounts_from_token
 from visualization.visualize import visualize
 
@@ -49,10 +50,18 @@ def home():
 @views.route('/visualization', methods=['GET', 'POST'])
 @login_required
 def visualization():
-    # TODO: make visualization
     user = db.session.query(User).filter_by(id=current_user.id).first()
     if user.token == '' or user.account_id == '':
         return redirect(url_for('views.home'))
-    
-    graph = visualize(user.token, user.account_id)
-    return render_template("visualization.html", user=current_user, graph=graph)
+
+    n_days = request.form.get('n_days', default=30, type=int)
+
+    ratios_graph = None
+    time_profit_graph = None
+    error_message = None
+    try:
+        ratios_graph, time_profit_graph = visualize(user.token, user.account_id, n_days=n_days)
+    except Exception as ex:
+        error_message = f"{str(ex)}\n{traceback.format_exc()}"
+
+    return render_template("visualization.html", user=current_user, ratios_graph=ratios_graph, time_profit_graph=time_profit_graph, n_days=n_days, error_message=error_message)

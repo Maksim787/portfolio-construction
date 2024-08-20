@@ -2,6 +2,8 @@ import datetime
 import asyncio
 import yaml
 import pandas as pd
+import sys
+sys.path.append('.')
 
 from library.utils import *
 

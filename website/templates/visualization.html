@@ -1,7 +1,24 @@
-{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
-%}
-<h1 align="center">Portfolio visualization</h1>
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1 align="center" style="font-family: 'Arial', sans-serif; font-weight: bold;">Portfolio Visualization</h1>
 
-{{ graph|safe }}
+<!-- Form to input the number of days -->
+<form method="POST" style="text-align: center; margin-bottom: 10px;">
+    <label for="n_days" style="font-family: 'Arial', sans-serif; font-weight: bold; font-size: 18px; margin-right: 10px;">Enter the number of days for returns:</label>
+    <input type="number" id="n_days" name="n_days" value="{{ n_days or 30 }}" min="1" required
+           style="margin-left: 10px; padding: 5px; font-family: 'Arial', sans-serif; font-size: 16px;">
+    <input type="submit" value="Generate"
+           style="margin-left: 10px; padding: 5px 15px; font-family: 'Arial', sans-serif; font-weight: bold; font-size: 16px;">
+</form>
+
+<!-- Display error message if it exists -->
+{% if error_message %}
+    <div style="color: red; font-weight: bold; text-align: center; margin-bottom: 10px;">
+        {{ error_message }}
+    </div>
+{% endif %}
+{{ ratios_graph|safe }}
+{{ time_profit_graph|safe }}
 
 {% endblock %}
